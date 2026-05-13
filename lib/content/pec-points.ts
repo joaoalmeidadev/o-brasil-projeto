@@ -13,16 +13,16 @@ export const pecPoints: PecPoint[] = [
   {
     number: '02',
     title: 'Adolescentes a partir de 14 anos',
-    body: 'Em casos específicos previstos na proposta, passam a responder com medidas socioeducativas mais severas.',
+    body: 'Podem ser responsabilizados penalmente em casos específicos previstos na proposta.',
   },
   {
     number: '03',
     title: 'Reforço do Estado',
-    body: 'Mais firmeza no enfrentamento à criminalidade juvenil e na resposta institucional às vítimas.',
+    body: 'Mais firmeza na resposta a delitos de alta gravidade praticados por menores.',
   },
   {
     number: '04',
     title: 'Combate à Impunidade',
-    body: 'Encerra o ciclo de portas giratórias que permitem reincidência sem consequência proporcional.',
+    body: 'Fim do tratamento brando a infratores reincidentes em crimes graves.',
   },
 ];

@@ -11,8 +11,8 @@
   --color-muted: #9aa39a;
   --color-border: rgba(245, 245, 240, 0.12);
 
-  --font-display: "Anton", "Bebas Neue", "Impact", system-ui, sans-serif;
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-display-loaded), "Bebas Neue", "Anton", "Impact", system-ui, sans-serif;
+  --font-sans: var(--font-sans-loaded), "Inter", system-ui, -apple-system, sans-serif;
 
   --radius-card: 14px;
   --radius-button: 999px;
@@ -44,8 +44,8 @@
   h4 {
     font-family: var(--font-display);
     font-weight: 400;
-    letter-spacing: -0.01em;
-    line-height: 0.92;
+    letter-spacing: -0.005em;
+    line-height: 0.88;
     text-transform: uppercase;
   }
 }
@@ -84,8 +84,8 @@
   .text-display {
     font-family: var(--font-display);
     text-transform: uppercase;
-    line-height: 0.9;
-    letter-spacing: -0.01em;
+    line-height: 0.86;
+    letter-spacing: -0.005em;
   }
 
   .ticker-mask {

@@ -7,18 +7,18 @@ export function StatBlock() {
   const { stat } = site;
 
   return (
-    <section id="stat" className="bg-(--color-bg) py-20 md:py-28">
-      <Container className="grid gap-12 md:grid-cols-[1.2fr_1fr] md:items-center">
+    <section id="stat" className="bg-(--color-bg) py-24 md:py-32">
+      <Container className="grid gap-16 md:grid-cols-[1.25fr_1fr] md:items-center">
         <div>
-          <div className="flex items-end gap-6">
-            <span className="text-display text-(--color-accent) text-[clamp(8rem,18vw,16rem)] leading-[0.8]">
+          <div className="flex items-end gap-2 sm:gap-4">
+            <span className="text-display text-(--color-accent) text-[clamp(9rem,22vw,18rem)] leading-[0.78] -mb-2">
               {stat.big}
             </span>
-            <p className="pb-2 text-display text-xl md:text-3xl max-w-[14ch] text-(--color-ink)">
+            <p className="pb-3 text-display text-2xl md:text-4xl max-w-[10ch] text-(--color-ink) leading-[0.92]">
               {stat.headline}
             </p>
           </div>
-          <p className="mt-8 max-w-prose text-sm md:text-base text-(--color-muted) leading-relaxed">
+          <p className="mt-10 max-w-[44ch] text-sm md:text-base text-(--color-muted) leading-relaxed">
             {stat.body}
           </p>
           <div className="mt-10">
@@ -30,12 +30,12 @@ export function StatBlock() {
           </div>
         </div>
 
-        <aside className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-8">
+        <aside className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-8 md:p-10">
           <DotChart />
-          <p className="mt-6 text-display text-2xl md:text-3xl leading-tight text-(--color-ink)">
+          <p className="mt-8 text-display text-3xl md:text-4xl leading-tight text-(--color-ink)">
             {stat.cardTitle}
           </p>
-          <p className="mt-3 text-sm text-(--color-muted) leading-relaxed">{stat.cardBody}</p>
+          <p className="mt-4 text-sm text-(--color-muted) leading-relaxed">{stat.cardBody}</p>
         </aside>
       </Container>
     </section>
@@ -43,16 +43,15 @@ export function StatBlock() {
 }
 
 function DotChart() {
-  const total = 30;
   return (
-    <div className="grid grid-cols-10 gap-2" aria-hidden>
-      {Array.from({ length: total }).map((_, i) => (
+    <div className="grid grid-cols-5 gap-3 w-fit" aria-hidden>
+      {Array.from({ length: 10 }).map((_, i) => (
         <span
           key={i}
           className={
-            i < 27
-              ? 'size-3 rounded-full bg-(--color-accent)'
-              : 'size-3 rounded-full bg-(--color-border)'
+            i < 9
+              ? 'size-5 rounded-full bg-(--color-accent)'
+              : 'size-5 rounded-full border-2 border-(--color-border)'
           }
         />
       ))}

@@ -1,42 +1,43 @@
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { site } from '@/lib/content/site';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export function Hero() {
   const { hero } = site;
 
   return (
-    <section className="relative overflow-hidden bg-(--color-bg) pt-12 pb-20 md:pt-20 md:pb-32">
-      <Container className="grid items-end gap-10 md:grid-cols-[1.1fr_1fr]">
-        <div className="space-y-8">
+    <section className="relative overflow-hidden bg-(--color-bg) pt-16 pb-24 md:pt-24 md:pb-36">
+      <Container className="grid items-end gap-12 md:grid-cols-[1.15fr_1fr]">
+        <div className="space-y-10">
           <span className="eyebrow">{hero.eyebrow}</span>
-          <h1 className="text-display text-6xl sm:text-7xl md:text-[7.5rem]">
-            {hero.title.map((word, i) => (
-              <span
-                key={word}
-                className={
-                  i === hero.titleAccentLineIndex ? 'block text-(--color-accent)' : 'block'
-                }
-              >
-                {word}
-              </span>
-            ))}
+          <h1 className="text-display text-[clamp(3.5rem,11vw,9rem)]">
+            <span className="block">{hero.titleLine1}</span>
+            <span className="block text-(--color-accent)">{hero.titleLine2}</span>
           </h1>
           <Link href="#stat" aria-label={hero.cta}>
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg" trailingIcon="↓">
               {hero.cta}
             </Button>
           </Link>
         </div>
 
-        <figure
-          className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-gradient-to-br from-(--color-surface) to-(--color-surface-2)"
-          aria-hidden="true"
-        >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(31,203,79,0.18),transparent_60%)]" />
-          <figcaption className="absolute bottom-6 right-6 text-right">
-            <span className="block text-xs uppercase tracking-[0.3em] text-(--color-accent)">
+        <figure className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-(--color-surface)">
+          <Image
+            src="/images/hero.png"
+            alt={`${hero.attribution.name}, ${hero.attribution.role}`}
+            fill
+            sizes="(min-width: 768px) 45vw, 100vw"
+            className="object-cover object-top"
+            priority
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-t from-(--color-bg)/85 via-transparent to-transparent"
+          />
+          <figcaption className="absolute right-5 bottom-5 text-right">
+            <span className="block text-[0.6875rem] uppercase tracking-[0.3em] text-(--color-accent)">
               {hero.attribution.name}
             </span>
             <span className="block text-[0.6875rem] uppercase tracking-[0.2em] text-(--color-muted)">

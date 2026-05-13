@@ -16,7 +16,7 @@ export const defenders: Defender[] = [
     name: 'Flávio Bolsonaro',
     role: 'Senador',
     party: 'PL/RJ',
-    photo: '/images/defenders/flavio-bolsonaro.jpg',
+    photo: '/images/defenders/flavio-portrait.png',
     socials: {
       instagram: 'https://instagram.com/flaviobolsonaro',
       twitter: 'https://x.com/FlavioBolsonaro',
@@ -27,7 +27,7 @@ export const defenders: Defender[] = [
     name: 'Carlos Jordy',
     role: 'Deputado Federal',
     party: 'PL/RJ',
-    photo: '/images/defenders/carlos-jordy.jpg',
+    photo: '/images/defenders/carlos-jordy.png',
     socials: {
       instagram: 'https://instagram.com/carlosjordy',
     },
@@ -37,7 +37,7 @@ export const defenders: Defender[] = [
     name: 'Nikolas Ferreira',
     role: 'Deputado Federal',
     party: 'PL/MG',
-    photo: '/images/defenders/nikolas-ferreira.jpg',
+    photo: '/images/defenders/nikolas-ferreira.png',
     socials: {
       instagram: 'https://instagram.com/nikolasferreiradm',
     },
