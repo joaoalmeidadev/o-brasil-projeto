@@ -1,0 +1,65 @@
+# Kamal 2 — Deploy config para DigitalOcean Droplet
+# Antes do primeiro deploy:
+#   1. Preencher servers.web com o IP do droplet
+#   2. Preencher proxy.host com o domínio (DNS A → IP do droplet)
+#   3. Atualizar image com seu usuário no GHCR/Docker Hub
+#   4. Criar .kamal/secrets com os valores reais (ver .kamal/secrets.example)
+#   5. `kamal setup` na primeira vez; `kamal deploy` nas seguintes
+service: brasil-nao-aguenta-mais
+image: TROCAR_USER/brasil-nao-aguenta-mais
+
+servers:
+  web:
+    - TROCAR_IP_DROPLET
+
+proxy:
+  ssl: true
+  host: TROCAR_DOMINIO.COM.BR
+  app_port: 3000
+  healthcheck:
+    path: /api/health
+    interval: 5
+    timeout: 3
+
+registry:
+  server: ghcr.io
+  username: TROCAR_USER
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+  cache:
+    type: registry
+    image: TROCAR_USER/brasil-nao-aguenta-mais-build-cache
+
+env:
+  clear:
+    NODE_ENV: production
+    PORT: 3000
+    HOSTNAME: 0.0.0.0
+    SITE_URL: https://TROCAR_DOMINIO.COM.BR
+    EMAIL_FROM: "O Brasil Não Aguenta Mais <no-reply@TROCAR_DOMINIO.COM.BR>"
+  secret:
+    - DATABASE_URL
+    - RESEND_API_KEY
+
+accessories:
+  postgres:
+    image: postgres:16-alpine
+    host: TROCAR_IP_DROPLET
+    port: "127.0.0.1:5432:5432"
+    env:
+      clear:
+        POSTGRES_USER: app
+        POSTGRES_DB: brasil_nao_aguenta_mais
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - data:/var/lib/postgresql/data
+
+aliases:
+  console: app exec --interactive --reuse "node"
+  shell: app exec --interactive --reuse "sh"
+  logs: app logs -f
+  migrate: app exec --reuse "node node_modules/.bin/prisma migrate deploy"

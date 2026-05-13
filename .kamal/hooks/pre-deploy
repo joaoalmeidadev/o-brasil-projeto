@@ -1,0 +1,11 @@
+#!/bin/sh
+# Roda migrations no container recém-buildado antes de promovê-lo.
+# Kamal v2 disponibiliza a versão em $KAMAL_VERSION e a role em $KAMAL_ROLE.
+set -e
+
+if [ "$KAMAL_COMMAND" != "deploy" ]; then
+  exit 0
+fi
+
+echo "==> Rodando prisma migrate deploy"
+kamal app exec --version "$KAMAL_VERSION" --reuse "node node_modules/.bin/prisma migrate deploy"
