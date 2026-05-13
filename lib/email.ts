@@ -1,65 +1,120 @@
 import { env } from '@/lib/env';
-import { Resend } from 'resend';
 
-type SendArgs = {
-  to: string;
+const LOOPS_API = 'https://app.loops.so/api/v1';
+
+type SubscribeArgs = {
+  email: string;
   name: string;
+  phone?: string;
+  state?: string;
+  source?: string;
 };
 
-export async function sendWelcomeEmail({ to, name }: SendArgs) {
-  if (!env.RESEND_API_KEY) {
-    console.warn('[email] RESEND_API_KEY ausente — skip envio para', to);
-    return { skipped: true as const };
+export type LoopsResult =
+  | { skipped: true }
+  | { skipped: false; created?: boolean; updated?: boolean; transactional?: boolean };
+
+export async function subscribeToLoops({
+  email,
+  name,
+  phone,
+  state,
+  source = 'landing',
+}: SubscribeArgs): Promise<LoopsResult> {
+  if (!env.LOOPS_API_KEY) {
+    console.warn('[loops] LOOPS_API_KEY ausente — skip envio para', email);
+    return { skipped: true };
   }
 
-  const resend = new Resend(env.RESEND_API_KEY);
-  const firstName = name.split(' ')[0] ?? name;
+  const [firstName, ...rest] = name.trim().split(/\s+/);
+  const lastName = rest.join(' ') || undefined;
 
-  const html = welcomeTemplate({ firstName });
+  const contactPayload = {
+    email,
+    firstName,
+    lastName,
+    source,
+    subscribed: true,
+    userGroup: 'PEC 32/2019',
+    ...(phone ? { phone } : {}),
+    ...(state ? { state } : {}),
+  };
 
-  const { error } = await resend.emails.send({
-    from: env.EMAIL_FROM,
-    to,
-    subject: 'Bem-vindo à mobilização pela PEC 32/2019',
-    html,
+  // Tenta criar; se já existir (409), faz update
+  const createRes = await fetch(`${LOOPS_API}/contacts/create`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(contactPayload),
   });
 
-  if (error) {
-    throw new Error(`Resend error: ${error.message}`);
+  const created = createRes.ok;
+  let updated = false;
+
+  if (!createRes.ok) {
+    const errText = await createRes.text().catch(() => '');
+    const alreadyExists = createRes.status === 409 || /already exists/i.test(errText);
+
+    if (!alreadyExists) {
+      throw new Error(`Loops create error: ${createRes.status} ${errText}`);
+    }
+
+    const updateRes = await fetch(`${LOOPS_API}/contacts/update`, {
+      method: 'PUT',
+      headers: authHeaders(),
+      body: JSON.stringify(contactPayload),
+    });
+    if (!updateRes.ok) {
+      const updateErr = await updateRes.text().catch(() => '');
+      throw new Error(`Loops update error: ${updateRes.status} ${updateErr}`);
+    }
+    updated = true;
   }
 
-  return { skipped: false as const };
+  let transactional = false;
+  if (env.LOOPS_WELCOME_TRANSACTIONAL_ID) {
+    try {
+      await sendTransactional({
+        email,
+        transactionalId: env.LOOPS_WELCOME_TRANSACTIONAL_ID,
+        dataVariables: { firstName: firstName ?? name },
+      });
+      transactional = true;
+    } catch (err) {
+      console.error('[loops] transactional error', err);
+    }
+  }
+
+  return { skipped: false, created, updated, transactional };
 }
 
-function welcomeTemplate({ firstName }: { firstName: string }) {
-  return `<!doctype html>
-<html lang="pt-BR">
-  <body style="margin:0;font-family:Inter,Arial,sans-serif;background:#0b0e0b;color:#f5f5f0;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#0b0e0b;padding:32px 0;">
-      <tr>
-        <td align="center">
-          <table width="560" cellpadding="0" cellspacing="0" style="background:#0f2218;border-radius:14px;padding:32px;">
-            <tr>
-              <td>
-                <p style="margin:0 0 12px;color:#1fcb4f;font-size:12px;letter-spacing:0.2em;text-transform:uppercase;">PEC 32/2019</p>
-                <h1 style="margin:0 0 16px;color:#f5f5f0;font-size:28px;line-height:1.2;">Olá, ${escapeHtml(firstName)} —<br/>boas-vindas à mobilização.</h1>
-                <p style="margin:0 0 16px;color:#9aa39a;font-size:14px;line-height:1.6;">Seu cadastro foi confirmado. Em breve você receberá o kit completo de materiais: reels, stories, cards, narrações e textos prontos para multiplicar a luta pela PEC 32/2019.</p>
-                <p style="margin:0;color:#9aa39a;font-size:12px;line-height:1.6;">Se você não solicitou este cadastro, basta ignorar este e-mail.</p>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>`;
+type TransactionalArgs = {
+  email: string;
+  transactionalId: string;
+  dataVariables?: Record<string, string | number | boolean>;
+};
+
+export async function sendTransactional({
+  email,
+  transactionalId,
+  dataVariables,
+}: TransactionalArgs): Promise<void> {
+  if (!env.LOOPS_API_KEY) return;
+
+  const res = await fetch(`${LOOPS_API}/transactional`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ transactionalId, email, dataVariables }),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => '');
+    throw new Error(`Loops transactional error: ${res.status} ${errText}`);
+  }
 }
 
-function escapeHtml(str: string) {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+function authHeaders() {
+  return {
+    Authorization: `Bearer ${env.LOOPS_API_KEY}`,
+    'Content-Type': 'application/json',
+  };
 }

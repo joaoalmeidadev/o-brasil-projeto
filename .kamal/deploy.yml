@@ -39,10 +39,10 @@ env:
     PORT: 3000
     HOSTNAME: 0.0.0.0
     SITE_URL: https://TROCAR_DOMINIO.COM.BR
-    EMAIL_FROM: "O Brasil Não Aguenta Mais <no-reply@TROCAR_DOMINIO.COM.BR>"
   secret:
     - DATABASE_URL
-    - RESEND_API_KEY
+    - LOOPS_API_KEY
+    - LOOPS_WELCOME_TRANSACTIONAL_ID
 
 accessories:
   postgres:

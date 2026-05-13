@@ -43,7 +43,9 @@ export function StatBlock() {
         </p>
 
         <Link
-          href="#signup"
+          href="https://www25.senado.leg.br/web/atividade/materias/-/materia/135977"
+          target="_blank"
+          rel="noopener noreferrer"
           className="mt-10 inline-flex w-full items-center justify-center bg-(--color-deep-green) px-8 py-5 text-display text-xl md:text-2xl text-(--color-paper) tracking-[0.05em] uppercase transition hover:bg-(--color-accent) hover:text-(--color-deep-green)"
         >
           {stat.cta}

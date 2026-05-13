@@ -39,7 +39,7 @@ export function KitSection() {
           </div>
         </div>
 
-        <div className="relative aspect-[1180/1180] w-full md:-mr-12 lg:-mr-24">
+        <div className="relative aspect-[1180/950] w-full md:-mr-12 lg:-mr-24">
           <Image
             src="/images/kit/composed.png"
             alt="Mockup de Instagram + materiais da campanha PEC 32/2019"

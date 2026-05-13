@@ -62,7 +62,8 @@ Para mostrar o site online ao seu chefe sem custo (plano free), o repositório j
 3. Conecte o repositório. O Render lê `render.yaml` e cria os 2 recursos.
 4. Após o primeiro deploy, copie a URL gerada (algo como `https://brasil-nao-aguenta-mais.onrender.com`) e preencha no painel da web app:
    - `SITE_URL` = URL final
-   - `RESEND_API_KEY` = sua chave em https://resend.com/api-keys (ou deixe vazio para pular envio de e-mail)
+   - `LOOPS_API_KEY` = sua chave em https://app.loops.so/settings/api (ou deixe vazio para pular o envio)
+   - `LOOPS_WELCOME_TRANSACTIONAL_ID` (opcional) = ID do template transactional para e-mail de boas-vindas
 5. Trigger um redeploy (botão **Manual Deploy** → **Clear cache & deploy latest commit**) para pegar as env vars.
 
 ### Limitações do tier free

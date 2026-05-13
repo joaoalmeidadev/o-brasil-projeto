@@ -19,7 +19,7 @@ vi.mock('@/lib/db', () => ({
 
 const sendMock = vi.fn();
 vi.mock('@/lib/email', () => ({
-  sendWelcomeEmail: (...args: unknown[]) => sendMock(...args),
+  subscribeToLoops: (...args: unknown[]) => sendMock(...args),
 }));
 
 const validInput = {
@@ -56,8 +56,10 @@ describe('subscribe action', () => {
       source: 'landing',
     });
     expect(sendMock).toHaveBeenCalledWith({
-      to: 'maria@example.com',
+      email: 'maria@example.com',
       name: 'Maria da Silva',
+      phone: '11999990000',
+      state: 'SP',
     });
   });
 
@@ -71,8 +73,8 @@ describe('subscribe action', () => {
     expect(createMock).not.toHaveBeenCalled();
   });
 
-  it('continua respondendo ok mesmo se o e-mail falhar', async () => {
-    sendMock.mockRejectedValueOnce(new Error('SMTP down'));
+  it('continua respondendo ok mesmo se o Loops falhar', async () => {
+    sendMock.mockRejectedValueOnce(new Error('Loops 500'));
     const { subscribe } = await import('@/app/actions/subscribe');
     const result = await subscribe(validInput);
     expect(result).toEqual({ ok: true });

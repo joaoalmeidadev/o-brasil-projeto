@@ -3,9 +3,11 @@
 import { Container } from '@/components/ui/Container';
 import { news } from '@/lib/content/news';
 import { site } from '@/lib/content/site';
-import useEmblaCarousel from 'embla-carousel-react';
+import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react';
+
+type EmblaApi = NonNullable<UseEmblaCarouselType[1]>;
 import Image from 'next/image';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export function NewsCarousel() {
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -15,8 +17,27 @@ export function NewsCarousel() {
     containScroll: 'trimSnaps',
   });
 
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
+
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
+  const onSelect = useCallback((api: EmblaApi) => {
+    setCanPrev(api.canScrollPrev());
+    setCanNext(api.canScrollNext());
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect(emblaApi);
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+    };
+  }, [emblaApi, onSelect]);
 
   return (
     <section className="bg-(--color-paper) py-24 md:py-32 text-(--color-deep-green)">
@@ -62,22 +83,26 @@ export function NewsCarousel() {
                 ))}
               </ul>
             </div>
-            <button
-              type="button"
-              onClick={scrollNext}
-              aria-label="Próxima notícia"
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 grid size-16 place-items-center rounded-full bg-(--color-deep-green) text-2xl text-(--color-paper) transition hover:bg-(--color-accent) hover:text-(--color-deep-green)"
-            >
-              →
-            </button>
-            <button
-              type="button"
-              onClick={scrollPrev}
-              aria-label="Notícia anterior"
-              className="absolute left-2 top-1/2 -translate-y-1/2 z-20 hidden size-12 place-items-center rounded-full border-2 border-(--color-deep-green) text-(--color-deep-green) transition hover:bg-(--color-deep-green) hover:text-(--color-paper) md:grid"
-            >
-              ←
-            </button>
+            {canNext && (
+              <button
+                type="button"
+                onClick={scrollNext}
+                aria-label="Próxima notícia"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 grid size-16 place-items-center rounded-full bg-(--color-deep-green) text-2xl text-(--color-paper) transition hover:bg-(--color-accent) hover:text-(--color-deep-green)"
+              >
+                →
+              </button>
+            )}
+            {canPrev && (
+              <button
+                type="button"
+                onClick={scrollPrev}
+                aria-label="Notícia anterior"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 hidden size-12 place-items-center rounded-full border-2 border-(--color-deep-green) text-(--color-deep-green) transition hover:bg-(--color-deep-green) hover:text-(--color-paper) md:grid"
+              >
+                ←
+              </button>
+            )}
           </div>
         </div>
       </Container>

@@ -4,6 +4,8 @@ export type Defender = {
   role: string;
   party: string;
   photo: string;
+  /** offset Y custom (ex: "-12%") aplicado via transform translateY na foto do card */
+  photoOffsetY?: string;
   socials?: {
     instagram?: string;
     twitter?: string;
@@ -38,6 +40,7 @@ export const defenders: Defender[] = [
     role: 'Deputado Federal',
     party: 'PL/MG',
     photo: '/images/defenders/nikolas-ferreira.png',
+    photoOffsetY: '-12%',
     socials: {
       instagram: 'https://instagram.com/nikolasferreiradm',
     },

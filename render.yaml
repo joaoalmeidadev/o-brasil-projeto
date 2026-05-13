@@ -39,9 +39,11 @@ services:
         fromDatabase:
           name: brasil-nao-aguenta-mais-db
           property: connectionString
-      - key: EMAIL_FROM
-        value: "O Brasil Nao Aguenta Mais <onboarding@resend.dev>"
       - key: SITE_URL
         sync: false
-      - key: RESEND_API_KEY
+      # Loops.so — https://app.loops.so/settings/api
+      - key: LOOPS_API_KEY
+        sync: false
+      # Opcional: ID de transactional template para e-mail de boas-vindas
+      - key: LOOPS_WELCOME_TRANSACTIONAL_ID
         sync: false

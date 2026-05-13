@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { FacebookIcon, InstagramIcon, XIcon, YoutubeIcon } from '@/components/ui/SocialIcons';
 import { defenders } from '@/lib/content/defenders';
@@ -19,11 +18,6 @@ export function DefendersGrid() {
           <p className="mt-6 max-w-[40ch] text-sm md:text-base text-(--color-muted) leading-relaxed">
             {site.defenders.body}
           </p>
-          <div className="mt-10">
-            <Button variant="outline" size="lg">
-              Veja mais
-            </Button>
-          </div>
         </div>
 
         <ul className="flex flex-col">
@@ -43,7 +37,8 @@ export function DefendersGrid() {
                     alt={d.name}
                     fill
                     sizes="(min-width: 640px) 160px, 120px"
-                    className="object-cover object-top"
+                    className="object-cover object-top origin-top"
+                    style={{ transform: `scale(1.4) translateY(${d.photoOffsetY ?? '0'})` }}
                   />
                 </div>
                 <div className="flex flex-col justify-between gap-3 py-1">

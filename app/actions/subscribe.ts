@@ -1,7 +1,7 @@
 'use server';
 
 import { prisma } from '@/lib/db';
-import { sendWelcomeEmail } from '@/lib/email';
+import { subscribeToLoops } from '@/lib/email';
 import { type LeadInput, leadSchema } from '@/lib/schemas/lead';
 import { headers } from 'next/headers';
 
@@ -47,9 +47,14 @@ export async function subscribe(payload: unknown): Promise<SubscribeResult> {
   }
 
   try {
-    await sendWelcomeEmail({ to: data.email, name: data.name });
+    await subscribeToLoops({
+      email: data.email,
+      name: data.name,
+      phone: data.phone,
+      state: data.state,
+    });
   } catch (err) {
-    console.error('[subscribe] email error', err);
+    console.error('[subscribe] loops error', err);
   }
 
   return { ok: true };
