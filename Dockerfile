@@ -4,7 +4,7 @@ ARG PNPM_VERSION=11.1.1
 # ---------- deps ----------
 FROM node:${NODE_VERSION}-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+RUN npm install -g pnpm@${PNPM_VERSION}
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
@@ -13,7 +13,7 @@ RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
 # ---------- builder ----------
 FROM node:${NODE_VERSION}-alpine AS builder
 RUN apk add --no-cache libc6-compat openssl
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+RUN npm install -g pnpm@${PNPM_VERSION}
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
