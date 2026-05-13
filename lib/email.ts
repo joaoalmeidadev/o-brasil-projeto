@@ -29,22 +29,22 @@ export async function subscribeToLoops({
   const [firstName, ...rest] = name.trim().split(/\s+/);
   const lastName = rest.join(' ') || undefined;
 
-  const contactPayload = {
+  const baseContact = {
     email,
     firstName,
     lastName,
     source,
-    subscribed: true,
     userGroup: 'PEC 32/2019',
     ...(phone ? { phone } : {}),
     ...(state ? { state } : {}),
   };
 
-  // Tenta criar; se já existir (409), faz update
+  // No create: subscribed=false força o Loops a disparar o double opt-in (e-mail
+  // de confirmação). O contato só vira subscribed=true após clicar no link.
   const createRes = await fetch(`${LOOPS_API}/contacts/create`, {
     method: 'POST',
     headers: authHeaders(),
-    body: JSON.stringify(contactPayload),
+    body: JSON.stringify({ ...baseContact, subscribed: false }),
   });
 
   const created = createRes.ok;
@@ -58,10 +58,13 @@ export async function subscribeToLoops({
       throw new Error(`Loops create error: ${createRes.status} ${errText}`);
     }
 
+    // No update: NÃO mandamos `subscribed` para preservar o status atual do
+    // contato (se já confirmou, não queremos desinscrever; se está pendente,
+    // não vamos forçar confirmar).
     const updateRes = await fetch(`${LOOPS_API}/contacts/update`, {
       method: 'PUT',
       headers: authHeaders(),
-      body: JSON.stringify(contactPayload),
+      body: JSON.stringify(baseContact),
     });
     if (!updateRes.ok) {
       const updateErr = await updateRes.text().catch(() => '');
