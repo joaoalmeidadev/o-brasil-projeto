@@ -1,0 +1,47 @@
+# Render Blueprint — deploy gratuito do site
+# Como usar:
+#   1. Suba este repositório no GitHub
+#   2. Em https://dashboard.render.com → New + → Blueprint
+#   3. Conecte o repositório; o Render lê este render.yaml e cria os 2 serviços
+#   4. No painel da web app, preencha:
+#      - RESEND_API_KEY (em "Environment")
+#      - SITE_URL (URL final do Render, ex: https://brasil-nao-aguenta-mais.onrender.com)
+#   5. Deploy automático a cada push na branch main
+#
+# Observações sobre o plano gratuito:
+# - Web service free: dorme após 15min sem tráfego (primeiro request demora ~30s)
+# - Postgres free: expira em 30 dias (Render avisa por e-mail)
+# - 750h/mês de execução; região fica fixa em Oregon no free
+
+databases:
+  - name: brasil-nao-aguenta-mais-db
+    plan: free
+    databaseName: brasil_nao_aguenta_mais
+    user: app
+    region: oregon
+
+services:
+  - type: web
+    name: brasil-nao-aguenta-mais
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: brasil-nao-aguenta-mais-db
+          property: connectionString
+      - key: EMAIL_FROM
+        value: "O Brasil Nao Aguenta Mais <onboarding@resend.dev>"
+      - key: SITE_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false

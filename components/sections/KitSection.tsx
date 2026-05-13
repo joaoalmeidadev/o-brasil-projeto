@@ -8,7 +8,7 @@ export function KitSection() {
   const { kit } = site;
 
   return (
-    <section className="relative overflow-hidden bg-(--color-bg) pt-28 md:pt-40 pb-20 md:pb-28">
+    <section className="relative overflow-hidden bg-black pt-28 md:pt-40 pb-20 md:pb-28">
       <svg
         viewBox="0 0 1440 120"
         preserveAspectRatio="none"
