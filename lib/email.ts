@@ -12,7 +12,7 @@ type SubscribeArgs = {
 
 export type LoopsResult =
   | { skipped: true }
-  | { skipped: false; created?: boolean; updated?: boolean; transactional?: boolean };
+  | { skipped: false; created?: boolean; updated?: boolean };
 
 export async function subscribeToLoops({
   email,
@@ -70,21 +70,9 @@ export async function subscribeToLoops({
     updated = true;
   }
 
-  let transactional = false;
-  if (env.LOOPS_WELCOME_TRANSACTIONAL_ID) {
-    try {
-      await sendTransactional({
-        email,
-        transactionalId: env.LOOPS_WELCOME_TRANSACTIONAL_ID,
-        dataVariables: { firstName: firstName ?? name },
-      });
-      transactional = true;
-    } catch (err) {
-      console.error('[loops] transactional error', err);
-    }
-  }
-
-  return { skipped: false, created, updated, transactional };
+  // Double opt-in está ativo no Loops — a criação dispara automaticamente o
+  // e-mail de confirmação. Não fazemos sendTransactional manual aqui.
+  return { skipped: false, created, updated };
 }
 
 type TransactionalArgs = {

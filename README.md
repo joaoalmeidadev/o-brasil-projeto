@@ -91,10 +91,60 @@ Para produção dedicada (sem o limite de "sleep" do free):
 4. Copie `.kamal/secrets.example` para `.kamal/secrets` e preencha:
    - `KAMAL_REGISTRY_PASSWORD` (PAT GHCR)
    - `DATABASE_URL` e `POSTGRES_PASSWORD` (mesmas credenciais nos dois)
-   - `RESEND_API_KEY` (https://resend.com)
+   - `LOOPS_API_KEY` (https://app.loops.so/settings/api)
 5. Primeiro deploy: `kamal setup` (instala Docker + proxy + sobe a app).
 6. Deploys subsequentes: `kamal deploy`.
 7. Para rodar migrations sem deploy completo: `kamal migrate`.
+
+## Arquitetura de e-mail
+
+**Loops.so é o provedor único** para todo o fluxo de e-mail do site, com o domínio verificado `flaviobolsonaro.news` (DKIM + SPF + DMARC configurados no Cloudflare).
+
+### Por que Loops e não AWS SES direto?
+
+A equipe de assessoria/marketing usa o **Loops como CMS** — cria e dispara campanhas (newsletters, alertas da PEC, kit de materiais) pela UI deles sem precisar de dev. Templates segmentação, audience, analytics e double opt-in vêm prontos.
+
+A API do Loops não expõe o HTML dos templates (envia diretamente), então separar "template no Loops + envio pelo SES" não tem caminho oficial. Optamos por **manter o Loops cuidando do ciclo completo**.
+
+### AWS SES está configurado, mas em reserva
+
+A infra de SES (sa-east-1, IAM user `ses-sender-obrasilnaoaguentamais`, 50k/dia, fora do sandbox) está pronta para ser usada quando fizer sentido — **não está conectada ao código da landing hoje**. Casos em que faria sentido começar a usar:
+
+- **Notificações administrativas** (alerta diário de novos leads, exports automáticos pra equipe)
+- **Volume > 100k/mês** onde o custo do Loops por contato fica salgado (SES = US$ 0,10/mil envios)
+- **Fallback** se o Loops cair ou o deliverability piorar
+
+### Fluxo atual
+
+- **Cadastro na landing** → `subscribeToLoops()` em `lib/email.ts` chama `POST /api/v1/contacts/create`
+- **Double opt-in ativo** → Loops dispara automaticamente o e-mail de confirmação para `noreply@flaviobolsonaro.news`
+- **Audience** → contatos confirmados aparecem em https://app.loops.so/audience com `userGroup: "PEC 32/2019"`
+- **Campanhas futuras** → equipe acessa Loops → Compose → escolhe template → segmenta por `userGroup`/`state`/etc → envia
+
+### Botão "Cancelar inscrição" no rodapé
+
+Configurado no painel Loops (Settings → Email Style → Email Footer) com HTML customizado contendo o link nativo `{{unsubscribeLink}}`. Aplica-se a TODOS os e-mails (transactional, marketing, opt-in). HTML de referência:
+
+```html
+<table align="center" cellpadding="0" cellspacing="0" style="margin: 32px auto 16px;" role="presentation">
+  <tr>
+    <td style="background: #1fcb4f; border-radius: 999px;">
+      <a href="{{unsubscribeLink}}"
+         style="display: inline-block; padding: 14px 32px; color: #0b0e0b; text-decoration: none; font-family: 'Inter', Arial, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;">
+        Cancelar inscrição
+      </a>
+    </td>
+  </tr>
+</table>
+<p style="text-align: center; color: #9aa39a; font-size: 11px; line-height: 1.6; font-family: 'Inter', Arial, sans-serif; margin: 20px auto 4px; max-width: 360px;">
+  Você está recebendo este e-mail porque se cadastrou na mobilização pela PEC 32/2019.
+</p>
+<p style="text-align: center; color: #9aa39a; font-size: 11px; line-height: 1.6; font-family: 'Inter', Arial, sans-serif; margin: 0 auto 24px;">
+  Senado Federal · Brasília/DF · Brasil
+</p>
+```
+
+Para testar: cadastrar com e-mail real, abrir mensagem de confirmação, conferir botão e clicar. O Loops registra o cancelamento (data + IP) no painel.
 
 ## Observações
 

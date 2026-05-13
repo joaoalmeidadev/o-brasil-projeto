@@ -42,7 +42,6 @@ env:
   secret:
     - DATABASE_URL
     - LOOPS_API_KEY
-    - LOOPS_WELCOME_TRANSACTIONAL_ID
 
 accessories:
   postgres:

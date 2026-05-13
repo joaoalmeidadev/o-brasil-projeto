@@ -42,8 +42,6 @@ services:
       - key: SITE_URL
         sync: false
       # Loops.so — https://app.loops.so/settings/api
+      # Domínio flaviobolsonaro.news verificado + double opt-in ativo
       - key: LOOPS_API_KEY
-        sync: false
-      # Opcional: ID de transactional template para e-mail de boas-vindas
-      - key: LOOPS_WELCOME_TRANSACTIONAL_ID
         sync: false
