@@ -8,8 +8,19 @@ export function KitSection() {
   const { kit } = site;
 
   return (
-    <section className="relative overflow-hidden bg-(--color-surface) py-20 md:py-28">
-      <Container className="relative grid items-center gap-8 md:grid-cols-[1fr_1.35fr]">
+    <section className="relative overflow-hidden bg-(--color-bg) pt-28 md:pt-40 pb-20 md:pb-28">
+      <svg
+        viewBox="0 0 1440 120"
+        preserveAspectRatio="none"
+        aria-hidden
+        className="absolute -top-px left-0 right-0 h-[70px] md:h-[110px] w-full text-(--color-surface)"
+      >
+        <path
+          d="M0,0 L1440,0 L1440,60 C1200,100 960,20 720,60 C480,100 240,20 0,60 Z"
+          fill="currentColor"
+        />
+      </svg>
+      <Container className="relative z-10 grid items-center gap-8 md:grid-cols-[1fr_1.35fr]">
         <div>
           <h2 className="text-display text-5xl md:text-[5.5rem] leading-[0.88]">
             <span className="block text-(--color-ink)">Faça</span>
