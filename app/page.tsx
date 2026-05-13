@@ -1,6 +1,5 @@
 import { DefendersGrid } from '@/components/sections/DefendersGrid';
 import { Footer } from '@/components/sections/Footer';
-import { Header } from '@/components/sections/Header';
 import { Hero } from '@/components/sections/Hero';
 import { KitSection } from '@/components/sections/KitSection';
 import { NewsCarousel } from '@/components/sections/NewsCarousel';
@@ -12,7 +11,6 @@ import { Ticker } from '@/components/sections/Ticker';
 export default function HomePage() {
   return (
     <>
-      <Header />
       <main>
         <Hero />
         <Ticker />

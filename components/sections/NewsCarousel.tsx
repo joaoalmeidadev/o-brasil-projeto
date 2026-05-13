@@ -19,58 +19,65 @@ export function NewsCarousel() {
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
-    <section className="bg-(--color-bg) py-24 md:py-32">
+    <section className="bg-(--color-paper) py-24 md:py-32 text-(--color-deep-green)">
       <Container>
-        <div className="grid gap-12 md:grid-cols-[1fr_1.6fr] md:items-start">
+        <div className="grid gap-12 md:grid-cols-[1fr_1.5fr] md:items-center">
           <header>
-            <h2 className="text-display text-4xl md:text-6xl leading-[0.92]">
-              A Realidade que faz a <span className="text-(--color-accent)">PEC 32/2019</span>{' '}
-              necessária
+            <h2 className="text-display text-5xl md:text-7xl leading-[0.9]">
+              <span className="block">A Realidade</span>
+              <span className="block">Que Faz a</span>
+              <span className="block">PEC 32/2019</span>
+              <span className="mt-1 inline-flex bg-(--color-deep-green) px-2 text-(--color-paper)">
+                Necessária
+              </span>
             </h2>
-            <p className="mt-6 max-w-[42ch] text-sm md:text-base text-(--color-muted) leading-relaxed">
+            <p className="mt-6 max-w-[40ch] text-sm md:text-base text-(--color-paper-muted) leading-relaxed">
               {site.news.body}
             </p>
           </header>
 
           <div className="relative">
-            <div ref={emblaRef} className="overflow-hidden">
-              <ul className="flex gap-4">
-                {news.map((item) => (
+            <div ref={emblaRef} className="overflow-hidden [perspective:1400px]">
+              <ul className="flex">
+                {news.map((item, i) => (
                   <li
                     key={item.id}
-                    className="min-w-0 shrink-0 grow-0 basis-[70%] sm:basis-[45%] md:basis-[38%]"
+                    className="min-w-0 shrink-0 grow-0 basis-[55%] sm:basis-[42%] md:basis-[36%]"
+                    style={{
+                      transform: `rotateY(${-8 + i * 4}deg) translateX(${i > 0 ? -i * 18 : 0}px)`,
+                      transformOrigin: 'left center',
+                      zIndex: news.length - i,
+                    }}
                   >
-                    <div className="relative aspect-[323/549] w-full overflow-hidden rounded-2xl bg-(--color-surface)">
+                    <div className="relative aspect-[323/549] w-full">
                       <Image
                         src={item.image}
                         alt="Manchete recente sobre crimes graves cometidos por adolescentes"
                         fill
-                        sizes="(min-width: 768px) 30vw, 70vw"
-                        className="object-contain"
+                        sizes="(min-width: 768px) 30vw, 55vw"
+                        className="object-contain drop-shadow-[0_20px_30px_rgba(15,34,24,0.15)]"
                       />
                     </div>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="mt-8 flex gap-3">
-              <button
-                type="button"
-                onClick={scrollPrev}
-                aria-label="Notícia anterior"
-                className="size-14 rounded-full border border-(--color-border) text-lg text-(--color-ink) transition hover:border-(--color-accent) hover:text-(--color-accent)"
-              >
-                ←
-              </button>
-              <button
-                type="button"
-                onClick={scrollNext}
-                aria-label="Próxima notícia"
-                className="size-14 rounded-full bg-(--color-accent) text-lg text-(--color-accent-ink) transition hover:bg-(--color-accent-strong)"
-              >
-                →
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={scrollNext}
+              aria-label="Próxima notícia"
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 grid size-16 place-items-center rounded-full bg-(--color-deep-green) text-2xl text-(--color-paper) transition hover:bg-(--color-accent) hover:text-(--color-deep-green)"
+            >
+              →
+            </button>
+            <button
+              type="button"
+              onClick={scrollPrev}
+              aria-label="Notícia anterior"
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-20 hidden size-12 place-items-center rounded-full border-2 border-(--color-deep-green) text-(--color-deep-green) transition hover:bg-(--color-deep-green) hover:text-(--color-paper) md:grid"
+            >
+              ←
+            </button>
           </div>
         </div>
       </Container>
