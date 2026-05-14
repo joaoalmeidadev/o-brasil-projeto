@@ -29,6 +29,13 @@ export async function subscribeToLoops({
   const [firstName, ...rest] = name.trim().split(/\s+/);
   const lastName = rest.join(' ') || undefined;
 
+  // Loops dispara o double opt-in apenas quando o contato é adicionado a uma
+  // mailing list pública. Sem a lista, o contato é criado "Unsubscribed" mas
+  // nenhum e-mail de confirmação é enviado.
+  const mailingLists = env.LOOPS_MAILING_LIST_ID
+    ? { [env.LOOPS_MAILING_LIST_ID]: true }
+    : undefined;
+
   const baseContact = {
     email,
     firstName,
@@ -37,6 +44,7 @@ export async function subscribeToLoops({
     userGroup: 'PEC 32/2019',
     ...(phone ? { phone } : {}),
     ...(state ? { state } : {}),
+    ...(mailingLists ? { mailingLists } : {}),
   };
 
   // No create: subscribed=false força o Loops a disparar o double opt-in (e-mail

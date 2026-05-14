@@ -45,3 +45,6 @@ services:
       # Domínio flaviobolsonaro.news verificado + double opt-in ativo
       - key: LOOPS_API_KEY
         sync: false
+      # ID da mailing list (Settings → Lists)
+      - key: LOOPS_MAILING_LIST_ID
+        sync: false
