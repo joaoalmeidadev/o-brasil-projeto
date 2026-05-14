@@ -47,12 +47,14 @@ export async function subscribeToLoops({
     ...(mailingLists ? { mailingLists } : {}),
   };
 
-  // No create: subscribed=false força o Loops a disparar o double opt-in (e-mail
-  // de confirmação). O contato só vira subscribed=true após clicar no link.
+  // Não mandamos `subscribed` no payload: o Loops trata `subscribed: false`
+  // como "opted out" e não dispara workflows. Omitindo o campo, ele cria como
+  // subscribed=true por default e o workflow "Bem-vindo ao movimento" (trigger
+  // "Contact added to list") dispara automaticamente.
   const createRes = await fetch(`${LOOPS_API}/contacts/create`, {
     method: 'POST',
     headers: authHeaders(),
-    body: JSON.stringify({ ...baseContact, subscribed: false }),
+    body: JSON.stringify(baseContact),
   });
 
   const created = createRes.ok;
